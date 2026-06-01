@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>あなたにぴったりのスイーツ診断🍰 | ならでわ6月号</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --main: #E8748A;
+    --main-light: #FFF0F3;
+    --main-mid: #F5C0CB;
+    --accent: #A86CC1;
+    --accent-light: #F5EEFF;
+    --cream: #FFFBF8;
+    --text: #3A1A2E;
+    --text-mid: #7A4A6A;
+    --text-light: #B08CA0;
+    --white: #FFFFFF;
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+  .bg-deco { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .bg-deco::before { content: ''; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: radial-gradient(circle, #F5C0CB 0%, transparent 70%); opacity: 0.4; }
+  .bg-deco::after { content: ''; position: absolute; bottom: -100px; left: -100px; width: 350px; height: 350px; background: radial-gradient(circle, #D4B8E8 0%, transparent 70%); opacity: 0.3; }
+
+  .container { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 0 20px 60px; }
+
+  .header { text-align: center; padding: 40px 0 30px; }
+  .header-badge { display: inline-block; background: var(--main); color: white; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 100px; margin-bottom: 16px; }
+  .header h1 { font-size: 26px; font-weight: 900; line-height: 1.4; margin-bottom: 8px; }
+  .header h1 span { color: var(--main); }
+  .header p { font-size: 14px; color: var(--text-mid); line-height: 1.7; }
+  .sweets-emoji { font-size: 60px; display: block; margin-bottom: 12px; animation: bounce 2s infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-info { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .progress-label { font-size: 13px; color: var(--text-mid); font-weight: 700; }
+  .progress-count { font-size: 13px; color: var(--text-light); }
+  .progress-bar { height: 8px; background: var(--main-mid); border-radius: 100px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--main), var(--accent)); border-radius: 100px; transition: width 0.4s ease; }
+
+  .question-card { background: var(--white); border-radius: var(--radius); padding: 28px 24px; margin-bottom: 20px; box-shadow: 0 4px 24px rgba(232,116,138,0.12); animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .question-num { font-size: 12px; font-weight: 700; color: var(--main); margin-bottom: 10px; letter-spacing: 0.08em; }
+  .question-text { font-size: 18px; font-weight: 700; line-height: 1.5; margin-bottom: 24px; }
+
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choice-btn { width: 100%; background: var(--main-light); border: 2px solid transparent; border-radius: var(--radius-sm); padding: 16px 20px; text-align: left; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 14px; font-family: 'Zen Maru Gothic', sans-serif; }
+  .choice-btn:hover { border-color: var(--main); background: var(--white); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(232,116,138,0.2); }
+  .choice-btn:active { transform: scale(0.98); }
+  .choice-letter { width: 36px; height: 36px; border-radius: 50%; background: var(--main-mid); color: var(--main); font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .choice-text { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
+
+  .result-card { background: var(--white); border-radius: var(--radius); padding: 32px 24px; box-shadow: 0 4px 24px rgba(232,116,138,0.15); animation: fadeIn 0.5s ease; display: none; }
+  .result-card.show { display: block; }
+  .result-badge { display: inline-block; background: linear-gradient(135deg, var(--main), var(--accent)); color: white; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 100px; margin-bottom: 16px; }
+  .result-emoji { font-size: 80px; display: block; text-align: center; margin-bottom: 20px; }
+  .result-shop-name { font-size: 22px; font-weight: 900; margin-bottom: 6px; line-height: 1.3; }
+  .result-item-name { font-size: 15px; color: var(--main); font-weight: 700; margin-bottom: 20px; }
+  .result-desc { font-size: 15px; line-height: 1.8; color: var(--text-mid); margin-bottom: 24px; background: var(--main-light); border-radius: var(--radius-sm); padding: 16px; }
+  .result-personality { font-size: 13px; color: var(--text-light); margin-bottom: 24px; line-height: 1.7; }
+
+  .coupon-box { background: linear-gradient(135deg, #FFF0F3, #F5EEFF); border: 2px dashed var(--main-mid); border-radius: var(--radius-sm); padding: 18px; text-align: center; margin-bottom: 20px; }
+  .coupon-box p { font-size: 13px; color: var(--text-mid); margin-bottom: 8px; }
+  .coupon-box strong { font-size: 15px; color: var(--main); font-weight: 800; }
+
+  .retry-btn { width: 100%; background: var(--white); border: 2px solid var(--main-mid); border-radius: var(--radius-sm); padding: 14px; font-size: 15px; font-weight: 700; color: var(--main); cursor: pointer; font-family: 'Zen Maru Gothic', sans-serif; transition: all 0.2s; }
+  .retry-btn:hover { background: var(--main-light); border-color: var(--main); }
+
+  .start-card { background: var(--white); border-radius: var(--radius); padding: 32px 24px; box-shadow: 0 4px 24px rgba(232,116,138,0.12); text-align: center; }
+  .start-btn { width: 100%; background: linear-gradient(135deg, var(--main), var(--accent)); border: none; border-radius: var(--radius-sm); padding: 18px; font-size: 17px; font-weight: 800; color: white; cursor: pointer; font-family: 'Zen Maru Gothic', sans-serif; transition: all 0.2s; margin-top: 24px; box-shadow: 0 4px 20px rgba(232,116,138,0.4); }
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,116,138,0.5); }
+  .start-btn:active { transform: scale(0.98); }
+
+  .shop-list { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; text-align: left; }
+  .shop-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-mid); }
+  .shop-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--main); flex-shrink: 0; }
+
+  .footer { text-align: center; padding-top: 40px; font-size: 12px; color: var(--text-light); line-height: 1.8; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="bg-deco"></div>
+<div class="container">
+
+  <div class="header">
+    <span class="sweets-emoji">🍰</span>
+    <span class="header-badge">ならでわ 2026年6月号</span>
+    <h1>あなたにぴったりの<br><span>スイーツ</span>はどれ？</h1>
+    <p>3つの質問に答えるだけ！<br>今月号の表紙を飾る5店舗から<br>あなたにぴったりのお店を診断します✨</p>
+  </div>
+
+  <!-- スタート画面 -->
+  <div class="start-card" id="startScreen">
+    <p style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;">今月の診断対象店舗</p>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:4px;">表紙特集「食感スイーツ」より</p>
+    <div class="shop-list">
+      <div class="shop-item"><div class="shop-dot"></div>パティスリーヒロ</div>
+      <div class="shop-item"><div class="shop-dot"></div>Bakery&Sweets Bon appetit（ボナペティ）</div>
+      <div class="shop-item"><div class="shop-dot"></div>TA COULEUR（タ・クルール）</div>
+      <div class="shop-item"><div class="shop-dot"></div>Patisserie moca</div>
+      <div class="shop-item"><div class="shop-dot"></div>お菓子のいわした</div>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">診断スタート！🍰</button>
+  </div>
+
+  <!-- 質問画面 -->
+  <div id="quizScreen" class="hidden">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span class="progress-label">回答中</span>
+        <span class="progress-count" id="progressCount">1 / 3</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:33%"></div>
+      </div>
+    </div>
+    <div class="question-card" id="questionCard">
+      <div class="question-num" id="questionNum">Q1</div>
+      <div class="question-text" id="questionText"></div>
+      <div class="choices" id="choicesWrap"></div>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div class="result-card" id="resultScreen">
+    <div class="result-badge">あなたにぴったりのスイーツはコレ！</div>
+    <div class="result-emoji" id="resultEmoji"></div>
+    <div class="result-shop-name" id="resultShop"></div>
+    <div class="result-item-name" id="resultItem"></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <div class="result-personality" id="resultPersonality"></div>
+    <div class="coupon-box">
+      <p>📖 紙面を手に取って</p>
+      <strong>「ならでわで見ました！」</strong>
+      <p style="margin-top:6px;font-size:12px;">でお得な特典をゲット🎁<br>クーポンはLINEのリッチメニューから確認できます✨<br>特典は6月25日まで！</p>
+    </div>
+    <button class="retry-btn" onclick="resetQuiz()">🔄 もう一度診断する</button>
+  </div>
+
+  <div class="footer">
+    月刊ならでわ！2026年6月号<br>
+    長崎県佐世保市・県北エリアの食遊情報誌<br><br>
+    ※この診断は月刊ならでわ！編集部が独自に作成したものです。<br>結果はあくまで参考としてお楽しみください😊
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    text: "今日の気分はどんなスイーツ？",
+    choices: [
+      { label: "A", text: "ふわふわ・とろとろ系が食べたい！", score: [3,0,1,2,0] },
+      { label: "B", text: "サクサク・パリパリ系が好き！", score: [0,3,2,0,1] },
+      { label: "C", text: "しっかり甘くて食べ応えのあるやつ！", score: [0,1,0,1,3] }
+    ]
+  },
+  {
+    text: "スイーツを食べる時の気分は？",
+    choices: [
+      { label: "A", text: "特別な日のちょっとリッチなご褒美", score: [3,1,0,2,0] },
+      { label: "B", text: "日常のちょっとした楽しみ", score: [0,2,1,0,3] },
+      { label: "C", text: "おしゃれなカフェでゆっくり楽しみたい", score: [1,0,3,1,0] }
+    ]
+  },
+  {
+    text: "スイーツを選ぶ時に大事にするのは？",
+    choices: [
+      { label: "A", text: "見た目・映え重視！", score: [2,1,3,0,0] },
+      { label: "B", text: "素材・こだわりを重視", score: [3,0,0,2,1] },
+      { label: "C", text: "コスパ・食べ応えを重視", score: [0,2,0,1,3] }
+    ]
+  }
+];
+
+const results = [
+  {
+    shop: "パティスリーヒロ",
+    item: "おすすめ：ティラミス 561円 / プリン 400円",
+    emoji: "☕",
+    desc: "九州産マスカルポーネを使ったティラミスはとろとろ食感が絶品！コーヒーゼリーとの相性も抜群で、甘さの中にほろ苦さが絶妙なバランス。大人のご褒美スイーツです。",
+    personality: "【あなたのタイプ】\n本格派・こだわり志向。素材にとことんこだわる、上質なものが好きな大人女子✨"
+  },
+  {
+    shop: "Bakery&Sweets Bon appetit（ボナペティ）",
+    item: "おすすめ：バリパイ 400円〜",
+    emoji: "🥐",
+    desc: "100層の生地がサクサクッと弾けるバリパイが大人気！表面のカラメルがバリバリ食感を楽しませてくれます。中にはカスタードたっぷりで、食べ応えも抜群！",
+    personality: "【あなたのタイプ】\n食感フェチ・アクティブ派。「おいしい！」を全力で楽しめる元気な佐世保っ子✨"
+  },
+  {
+    shop: "TA COULEUR（タ・クルール）",
+    item: "おすすめ：クレームブリュレ 500円",
+    emoji: "🍮",
+    desc: "シナモンやスパイスを2日かけて丁寧に仕上げたクレームブリュレ。表面をカリッとカラメリゼした瞬間の「パリッ」という食感がたまりません。おしゃれなカフェでゆっくりどうぞ。",
+    personality: "【あなたのタイプ】\nおしゃれ・トレンド志向。人と違う選択ができるセンス抜群の女性✨"
+  },
+  {
+    shop: "Patisserie moca",
+    item: "おすすめ：ナッツ＆チョコレートムース",
+    emoji: "🍫",
+    desc: "濃厚なチョコレートムースと重い旨味のナッツムース、キャラメルクリームの組み合わせが絶品！ダックワーズのサクサク食感とのコントラストが楽しめる、贅沢な一品です。",
+    personality: "【あなたのタイプ】\nリッチ・上質志向。大切な自分へのご褒美を惜しまない、自分を愛せる女性✨"
+  },
+  {
+    shop: "お菓子のいわした",
+    item: "おすすめ：マンリーズコルネット 1,800円",
+    emoji: "🧁",
+    desc: "直径18cmの大きなスフレチーズケーキが人気！ふんわりとした食感の中にレモンの爽やかな香りがたまらない、地元に長く愛されてきた安心感のある味わいです。",
+    personality: "【あなたのタイプ】\n安定・地元愛志向。みんなが笑顔になれる定番を大切にする、温かい人柄の持ち主✨"
+  }
+];
+
+let currentQ = 0;
+let scores = [0,0,0,0,0];
+
+function startQuiz() {
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('questionNum').textContent = `Q${currentQ+1}`;
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('progressCount').textContent = `${currentQ+1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${((currentQ+1)/questions.length)*100}%`;
+  const wrap = document.getElementById('choicesWrap');
+  wrap.innerHTML = '';
+  q.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<div class="choice-letter">${c.label}</div><div class="choice-text">${c.text}</div>`;
+    btn.onclick = () => selectChoice(c.score);
+    wrap.appendChild(btn);
+  });
+}
+
+function selectChoice(score) {
+  score.forEach((s,i) => scores[i] += s);
+  currentQ++;
+  if (currentQ < questions.length) {
+    document.getElementById('questionCard').style.animation = 'none';
+    setTimeout(() => {
+      document.getElementById('questionCard').style.animation = 'fadeIn 0.3s ease';
+      showQuestion();
+    }, 50);
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('quizScreen').classList.add('hidden');
+  const maxIdx = scores.indexOf(Math.max(...scores));
+  const r = results[maxIdx];
+  document.getElementById('resultEmoji').textContent = r.emoji;
+  document.getElementById('resultShop').textContent = r.shop;
+  document.getElementById('resultItem').textContent = r.item;
+  document.getElementById('resultDesc').textContent = r.desc;
+  document.getElementById('resultPersonality').innerHTML = r.personality.replace('\n','<br>');
+  document.getElementById('resultScreen').classList.add('show');
+}
+
+function resetQuiz() {
+  currentQ = 0;
+  scores = [0,0,0,0,0];
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('startScreen').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
