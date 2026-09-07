@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>あなたにぴったりのトルコライス診断🍽️ | ならでわ9月号</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --main: #C8601A;
+    --main-light: #FFF5EE;
+    --main-mid: #F0C8A0;
+    --accent: #2A7A3A;
+    --accent-light: #F0FFF4;
+    --cream: #FFFDF8;
+    --text: #2A1A0A;
+    --text-mid: #6A4020;
+    --text-light: #B08060;
+    --white: #FFFFFF;
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  .bg-deco { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .bg-deco::before { content: ''; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: radial-gradient(circle, #F0C8A0 0%, transparent 70%); opacity: 0.4; }
+  .bg-deco::after { content: ''; position: absolute; bottom: -100px; left: -100px; width: 350px; height: 350px; background: radial-gradient(circle, #C8E8C0 0%, transparent 70%); opacity: 0.3; }
+  .container { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 0 20px 60px; }
+  .header { text-align: center; padding: 40px 0 30px; }
+  .header-badge { display: inline-block; background: linear-gradient(135deg, var(--main), var(--accent)); color: white; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 100px; margin-bottom: 16px; }
+  .header h1 { font-size: 26px; font-weight: 900; line-height: 1.4; margin-bottom: 8px; }
+  .header h1 span { color: var(--main); }
+  .header p { font-size: 14px; color: var(--text-mid); line-height: 1.7; }
+  .main-emoji { font-size: 60px; display: block; margin-bottom: 12px; animation: bounce 2s infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-info { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .progress-label { font-size: 13px; color: var(--text-mid); font-weight: 700; }
+  .progress-count { font-size: 13px; color: var(--text-light); }
+  .progress-bar { height: 8px; background: var(--main-mid); border-radius: 100px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--main), var(--accent)); border-radius: 100px; transition: width 0.4s ease; }
+  .question-card { background: var(--white); border-radius: var(--radius); padding: 28px 24px; margin-bottom: 20px; box-shadow: 0 4px 24px rgba(200,96,26,0.12); animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .question-num { font-size: 12px; font-weight: 700; color: var(--main); margin-bottom: 10px; letter-spacing: 0.08em; }
+  .question-text { font-size: 18px; font-weight: 700; line-height: 1.5; margin-bottom: 24px; }
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choice-btn { width: 100%; background: var(--main-light); border: 2px solid transparent; border-radius: var(--radius-sm); padding: 16px 20px; text-align: left; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 14px; font-family: 'Zen Maru Gothic', sans-serif; }
+  .choice-btn:hover { border-color: var(--main); background: var(--white); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(200,96,26,0.2); }
+  .choice-btn:active { transform: scale(0.98); }
+  .choice-letter { width: 36px; height: 36px; border-radius: 50%; background: var(--main-mid); color: var(--main); font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .choice-text { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
+  .result-card { background: var(--white); border-radius: var(--radius); padding: 32px 24px; box-shadow: 0 4px 24px rgba(200,96,26,0.15); animation: fadeIn 0.5s ease; display: none; }
+  .result-card.show { display: block; }
+  .result-badge { display: inline-block; background: linear-gradient(135deg, var(--main), var(--accent)); color: white; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 100px; margin-bottom: 16px; }
+  .result-emoji { font-size: 80px; display: block; text-align: center; margin-bottom: 20px; }
+  .result-shop-name { font-size: 21px; font-weight: 900; margin-bottom: 6px; line-height: 1.3; }
+  .result-item-name { font-size: 15px; color: var(--main); font-weight: 700; margin-bottom: 20px; }
+  .result-desc { font-size: 14px; line-height: 1.8; color: var(--text-mid); margin-bottom: 24px; background: var(--main-light); border-radius: var(--radius-sm); padding: 16px; }
+  .result-personality { font-size: 13px; color: var(--text-light); margin-bottom: 24px; line-height: 1.7; }
+  .coupon-box { background: linear-gradient(135deg, #FFF5EE, #F0FFF4); border: 2px dashed var(--main-mid); border-radius: var(--radius-sm); padding: 18px; text-align: center; margin-bottom: 20px; }
+  .coupon-box p { font-size: 13px; color: var(--text-mid); margin-bottom: 8px; }
+  .coupon-box strong { font-size: 15px; color: var(--main); font-weight: 800; }
+  .retry-btn { width: 100%; background: var(--white); border: 2px solid var(--main-mid); border-radius: var(--radius-sm); padding: 14px; font-size: 15px; font-weight: 700; color: var(--main); cursor: pointer; font-family: 'Zen Maru Gothic', sans-serif; transition: all 0.2s; }
+  .retry-btn:hover { background: var(--main-light); border-color: var(--main); }
+  .start-card { background: var(--white); border-radius: var(--radius); padding: 32px 24px; box-shadow: 0 4px 24px rgba(200,96,26,0.12); text-align: center; }
+  .start-btn { width: 100%; background: linear-gradient(135deg, var(--main), var(--accent)); border: none; border-radius: var(--radius-sm); padding: 18px; font-size: 17px; font-weight: 800; color: white; cursor: pointer; font-family: 'Zen Maru Gothic', sans-serif; transition: all 0.2s; margin-top: 24px; box-shadow: 0 4px 20px rgba(200,96,26,0.4); }
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(200,96,26,0.5); }
+  .start-btn:active { transform: scale(0.98); }
+  .shop-list { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; text-align: left; }
+  .shop-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-mid); }
+  .shop-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--main); flex-shrink: 0; }
+  .footer { text-align: center; padding-top: 40px; font-size: 12px; color: var(--text-light); line-height: 1.8; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="bg-deco"></div>
+<div class="container">
+  <div class="header">
+    <span class="main-emoji">🍽️</span>
+    <span class="header-badge">ならでわ 2026年9月号</span>
+    <h1>あなたにぴったりの<br><span>トルコライス</span>はどれ？</h1>
+    <p>3つの質問に答えるだけ！<br>今月号の表紙を飾る5店舗から<br>あなたにぴったりのお店を診断します✨</p>
+  </div>
+
+  <div class="start-card" id="startScreen">
+    <p style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;">今月の診断対象店舗</p>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:4px;">表紙特集「トルコライス」より</p>
+    <div class="shop-list">
+      <div class="shop-item"><div class="shop-dot"></div>Rocca Rocca -六花六歌-（ロッカロッカ）</div>
+      <div class="shop-item"><div class="shop-dot"></div>お食事処 天津飯店</div>
+      <div class="shop-item"><div class="shop-dot"></div>ハンバーグ家 ss389</div>
+      <div class="shop-item"><div class="shop-dot"></div>キッチンはーとらんど</div>
+      <div class="shop-item"><div class="shop-dot"></div>路地裏の小さなレストラン Platon</div>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">診断スタート！🍽️</button>
+  </div>
+
+  <div id="quizScreen" class="hidden">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span class="progress-label">回答中</span>
+        <span class="progress-count" id="progressCount">1 / 3</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:33%"></div>
+      </div>
+    </div>
+    <div class="question-card" id="questionCard">
+      <div class="question-num" id="questionNum">Q1</div>
+      <div class="question-text" id="questionText"></div>
+      <div class="choices" id="choicesWrap"></div>
+    </div>
+  </div>
+
+  <div class="result-card" id="resultScreen">
+    <div class="result-badge">あなたにぴったりのトルコライスはコレ！</div>
+    <div class="result-emoji" id="resultEmoji"></div>
+    <div class="result-shop-name" id="resultShop"></div>
+    <div class="result-item-name" id="resultItem"></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <div class="result-personality" id="resultPersonality"></div>
+    <div class="coupon-box">
+      <p>📖 紙面を手に取って</p>
+      <strong>「ならでわで見ました！」</strong>
+      <p style="margin-top:6px;font-size:12px;">でお得な特典をゲット🎁<br>クーポンはLINEのリッチメニューから確認できます✨<br>特典は9月25日まで！</p>
+    </div>
+    <button class="retry-btn" onclick="resetQuiz()">🔄 もう一度診断する</button>
+  </div>
+
+  <div class="footer">
+    月刊ならでわ！2026年9月号<br>
+    長崎県佐世保市・県北エリアの食遊情報誌<br><br>
+    ※この診断は月刊ならでわ！編集部が独自に作成したものです。<br>結果はあくまで参考としてお楽しみください😊
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    text: "トルコライスで一番大事にしたいのは？",
+    choices: [
+      { label: "A", text: "おしゃれ・こだわりの一皿を楽しみたい", score: [3,0,1,0,2] },
+      { label: "B", text: "老舗の安定感・昔ながらの味が好き", score: [0,3,0,0,1] },
+      { label: "C", text: "ボリューム満点でがっつり食べたい！", score: [0,1,3,2,0] }
+    ]
+  },
+  {
+    text: "トルコライスのどの部分が好き？",
+    choices: [
+      { label: "A", text: "ナポリタン！パスタがメインで嬉しい", score: [2,1,0,0,3] },
+      { label: "B", text: "カツ系でがっつりメインが食べたい！", score: [0,2,3,1,0] },
+      { label: "C", text: "ハンバーグやオリジナルトッピングが好き", score: [3,0,2,3,0] }
+    ]
+  },
+  {
+    text: "お店の雰囲気で選ぶなら？",
+    choices: [
+      { label: "A", text: "おしゃれで写真映えするお店", score: [3,0,0,0,2] },
+      { label: "B", text: "地元に愛される老舗・懐かしい雰囲気", score: [0,3,0,1,1] },
+      { label: "C", text: "アットホームで気軽に入れるお店", score: [0,1,3,2,0] }
+    ]
+  }
+];
+
+const results = [
+  {
+    shop: "Rocca Rocca -六花六歌-（ロッカロッカ）",
+    item: "小柄トマトのイタリアン風チキントルコ 1,600円〜",
+    emoji: "🍅",
+    desc: "大村湾の鶏肉と共に味わえる小柄トマトのイタリアン風チキントルコ！特製トマトソースがサクッと軽いチキンカツやサラダと絡み合い、ハーモニーが絶品。数量限定メニューなので早めに訪れてね！",
+    personality: "【あなたのタイプ】\nおしゃれ・こだわり派。素材や見た目にこだわった一皿を大切に楽しめる、センス抜群の方✨"
+  },
+  {
+    shop: "お食事処 天津飯店",
+    item: "トルコライス 1,000円〜",
+    emoji: "🏛️",
+    desc: "60年以上続く老舗「中華屋さんならでは」のトルコライス。たんわり軽くやさしく仕上げた昔なじみの味が魅力。コロッケや半熟タマゴなどに変更も可能で、注文は伝えるだけでOK！",
+    personality: "【あなたのタイプ】\n安定・地元愛志向。長年愛され続けてきた本物の味を大切にする、温かみのある方✨"
+  },
+  {
+    shop: "ハンバーグ家 ss389",
+    item: "グラタントルコライス 150g 1,830円〜",
+    emoji: "🍖",
+    desc: "総重量1.5kg超えのボリュームMAX「グラタントルコライス」！しめじをたっぷり使った自家製ホワイトソースのまろやかなグラタンと、お店自慢の熟成ハンバーグの旨味がしっかり感じられる豪快な一皿！",
+    personality: "【あなたのタイプ】\nパワフル・食いしん坊派。「おいしい！」を全力で楽しめる、エネルギッシュな佐世保っ子✨"
+  },
+  {
+    shop: "キッチンはーとらんど",
+    item: "揚げ豆腐トルコライス 1,450円〜",
+    emoji: "🫶",
+    desc: "オーダーを受けてから揚げる出来たての「揚げ豆腐トルコライス」！手づくりのエビフライも絶品で、カツは100%エビ油で仕上げたボリューム満点メニュー。「究極のチキン南蛮」まで幅広く揃う！",
+    personality: "【あなたのタイプ】\nアットホーム・温かみ派。手づくりの温かさが感じられる、居心地のいいお店が好きな方✨"
+  },
+  {
+    shop: "路地裏の小さなレストラン Platon",
+    item: "トルコライス 1,400円〜",
+    emoji: "🌿",
+    desc: "街の路地に佇む隠れ家レストランのトルコライス。高いガーリックライスとしっかりめのナポリタンが特徴で、佐世保伝統の組み合わせを丁寧に仕上げた一皿。MR医院駅から近くアクセスも便利！",
+    personality: "【あなたのタイプ】\n隠れ家好き・こだわり派。人に教えたくなる穴場のお店を見つけるのが得意な方✨"
+  }
+];
+
+let currentQ = 0;
+let scores = [0,0,0,0,0];
+
+function startQuiz() {
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('questionNum').textContent = 'Q'+(currentQ+1);
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('progressCount').textContent = (currentQ+1)+' / '+questions.length;
+  document.getElementById('progressFill').style.width = (((currentQ+1)/questions.length)*100)+'%';
+  const wrap = document.getElementById('choicesWrap');
+  wrap.innerHTML = '';
+  q.choices.forEach(function(c) {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = '<div class="choice-letter">'+c.label+'</div><div class="choice-text">'+c.text+'</div>';
+    btn.onclick = function() { selectChoice(c.score); };
+    wrap.appendChild(btn);
+  });
+}
+
+function selectChoice(score) {
+  score.forEach(function(s,i) { scores[i] += s; });
+  currentQ++;
+  if (currentQ < questions.length) {
+    document.getElementById('questionCard').style.animation = 'none';
+    setTimeout(function() {
+      document.getElementById('questionCard').style.animation = 'fadeIn 0.3s ease';
+      showQuestion();
+    }, 50);
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('quizScreen').classList.add('hidden');
+  const maxIdx = scores.indexOf(Math.max.apply(null, scores));
+  const r = results[maxIdx];
+  document.getElementById('resultEmoji').textContent = r.emoji;
+  document.getElementById('resultShop').textContent = r.shop;
+  document.getElementById('resultItem').textContent = 'おすすめ：'+r.item;
+  document.getElementById('resultDesc').textContent = r.desc;
+  document.getElementById('resultPersonality').innerHTML = r.personality.replace('\n','<br>');
+  document.getElementById('resultScreen').classList.add('show');
+}
+
+function resetQuiz() {
+  currentQ = 0;
+  scores = [0,0,0,0,0];
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('startScreen').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
