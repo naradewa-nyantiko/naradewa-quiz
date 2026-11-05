@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>あなたにぴったりの焼き菓子診断🍰 | ならでわ11月号</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --main: #A0522D;
+    --main-light: #FFF8F2;
+    --main-mid: #E8C4A0;
+    --accent: #C8703A;
+    --cream: #FDFAF5;
+    --text: #2A1800;
+    --text-mid: #6A3818;
+    --text-light: #A07050;
+    --white: #FFFFFF;
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  .bg-deco { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .bg-deco::before { content: ''; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: radial-gradient(circle, #E8C4A0 0%, transparent 70%); opacity: 0.4; }
+  .bg-deco::after { content: ''; position: absolute; bottom: -100px; left: -100px; width: 350px; height: 350px; background: radial-gradient(circle, #F0D8B8 0%, transparent 70%); opacity: 0.3; }
+  .container { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 0 20px 60px; }
+  .header { text-align: center; padding: 40px 0 30px; }
+  .header-badge { display: inline-block; background: linear-gradient(135deg, var(--main), var(--accent)); color: white; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 100px; margin-bottom: 16px; }
+  .header h1 { font-size: 26px; font-weight: 900; line-height: 1.4; margin-bottom: 8px; }
+  .header h1 span { color: var(--main); }
+  .header p { font-size: 14px; color: var(--text-mid); line-height: 1.7; }
+  .main-emoji { font-size: 60px; display: block; margin-bottom: 12px; animation: bounce 2s infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-info { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .progress-label { font-size: 13px; color: var(--text-mid); font-weight: 700; }
+  .progress-count { font-size: 13px; color: var(--text-light); }
+  .progress-bar { height: 8px; background: var(--main-mid); border-radius: 100px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--main), var(--accent)); border-radius: 100px; transition: width 0.4s ease; }
+  .question-card { background: var(--white); border-radius: var(--radius); padding: 28px 24px; margin-bottom: 20px; box-shadow: 0 4px 24px rgba(160,82,45,0.12); animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .question-num { font-size: 12px; font-weight: 700; color: var(--main); margin-bottom: 10px; letter-spacing: 0.08em; }
+  .question-text { font-size: 18px; font-weight: 700; line-height: 1.5; margin-bottom: 24px; }
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choice-btn { width: 100%; background: var(--main-light); border: 2px solid transparent; border-radius: var(--radius-sm); padding: 16px 20px; text-align: left; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 14px; font-family: 'Zen Maru Gothic', sans-serif; }
+  .choice-btn:hover { border-color: var(--main); background: var(--white); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(160,82,45,0.2); }
+  .choice-btn:active { transform: scale(0.98); }
+  .choice-letter { width: 36px; height: 36px; border-radius: 50%; background: var(--main-mid); color: var(--main); font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .choice-text { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; }
+  .result-card { background: var(--white); border-radius: var(--radius); padding: 32px 24px; box-shadow: 0 4px 24px rgba(160,82,45,0.15); animation: fadeIn 0.5s ease; display: none; }
+  .result-card.show { display: block; }
+  .result-badge { display: inline-block; background: linear-gradient(135deg, var(--main), var(--accent)); color: white; font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 100px; margin-bottom: 16px; }
+  .result-emoji { font-size: 80px; display: block; text-align: center; margin-bottom: 20px; }
+  .result-shop-name { font-size: 21px; font-weight: 900; margin-bottom: 6px; line-height: 1.3; }
+  .result-item-name { font-size: 15px; color: var(--main); font-weight: 700; margin-bottom: 20px; }
+  .result-desc { font-size: 14px; line-height: 1.8; color: var(--text-mid); margin-bottom: 24px; background: var(--main-light); border-radius: var(--radius-sm); padding: 16px; }
+  .result-personality { font-size: 13px; color: var(--text-light); margin-bottom: 24px; line-height: 1.7; }
+  .coupon-box { background: linear-gradient(135deg, #FFF8F2, #FFF5EC); border: 2px dashed var(--main-mid); border-radius: var(--radius-sm); padding: 18px; text-align: center; margin-bottom: 20px; }
+  .coupon-box p { font-size: 13px; color: var(--text-mid); margin-bottom: 8px; }
+  .coupon-box strong { font-size: 15px; color: var(--main); font-weight: 800; }
+  .retry-btn { width: 100%; background: var(--white); border: 2px solid var(--main-mid); border-radius: var(--radius-sm); padding: 14px; font-size: 15px; font-weight: 700; color: var(--main); cursor: pointer; font-family: 'Zen Maru Gothic', sans-serif; transition: all 0.2s; }
+  .retry-btn:hover { background: var(--main-light); border-color: var(--main); }
+  .start-card { background: var(--white); border-radius: var(--radius); padding: 32px 24px; box-shadow: 0 4px 24px rgba(160,82,45,0.12); text-align: center; }
+  .start-btn { width: 100%; background: linear-gradient(135deg, var(--main), var(--accent)); border: none; border-radius: var(--radius-sm); padding: 18px; font-size: 17px; font-weight: 800; color: white; cursor: pointer; font-family: 'Zen Maru Gothic', sans-serif; transition: all 0.2s; margin-top: 24px; box-shadow: 0 4px 20px rgba(160,82,45,0.4); }
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(160,82,45,0.5); }
+  .start-btn:active { transform: scale(0.98); }
+  .shop-list { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; text-align: left; }
+  .shop-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-mid); }
+  .shop-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--main); flex-shrink: 0; }
+  .footer { text-align: center; padding-top: 40px; font-size: 12px; color: var(--text-light); line-height: 1.8; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="bg-deco"></div>
+<div class="container">
+  <div class="header">
+    <span class="main-emoji">🍰</span>
+    <span class="header-badge">ならでわ 2026年11月号</span>
+    <h1>あなたにぴったりの<br><span>焼き菓子</span>はどれ？</h1>
+    <p>3つの質問に答えるだけ！<br>今月号の表紙を飾る5店舗から<br>あなたにぴったりのお店を診断します✨</p>
+  </div>
+
+  <div class="start-card" id="startScreen">
+    <p style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;">今月の診断対象店舗</p>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:4px;">表紙特集「焼き菓子」より</p>
+    <div class="shop-list">
+      <div class="shop-item"><div class="shop-dot"></div>mill coffeestand</div>
+      <div class="shop-item"><div class="shop-dot"></div>ぽると総本舗</div>
+      <div class="shop-item"><div class="shop-dot"></div>MONANGE SWEETS</div>
+      <div class="shop-item"><div class="shop-dot"></div>菓子職人の丘 デタント</div>
+      <div class="shop-item"><div class="shop-dot"></div>PYUCRO（ピュークロ）</div>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">診断スタート！🍰</button>
+  </div>
+
+  <div id="quizScreen" class="hidden">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span class="progress-label">回答中</span>
+        <span class="progress-count" id="progressCount">1 / 3</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:33%"></div>
+      </div>
+    </div>
+    <div class="question-card" id="questionCard">
+      <div class="question-num" id="questionNum">Q1</div>
+      <div class="question-text" id="questionText"></div>
+      <div class="choices" id="choicesWrap"></div>
+    </div>
+  </div>
+
+  <div class="result-card" id="resultScreen">
+    <div class="result-badge">あなたにぴったりの焼き菓子はコレ！</div>
+    <div class="result-emoji" id="resultEmoji"></div>
+    <div class="result-shop-name" id="resultShop"></div>
+    <div class="result-item-name" id="resultItem"></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <div class="result-personality" id="resultPersonality"></div>
+    <div class="coupon-box">
+      <p>📖 紙面を手に取って</p>
+      <strong>「ならでわで見ました！」</strong>
+      <p style="margin-top:6px;font-size:12px;">でお得な特典をゲット🎁<br>クーポンはLINEのリッチメニューから確認できます✨<br>特典は11月25日まで！</p>
+    </div>
+    <button class="retry-btn" onclick="resetQuiz()">🔄 もう一度診断する</button>
+  </div>
+
+  <div class="footer">
+    月刊ならでわ！2026年11月号<br>
+    長崎県佐世保市・県北エリアの食遊情報誌<br><br>
+    ※この診断は月刊ならでわ！編集部が独自に作成したものです。<br>結果はあくまで参考としてお楽しみください😊
+  </div>
+</div>
+
+<script>
+var questions = [
+  {
+    text: "今日のおやつ、どんな気分？",
+    choices: [
+      { label: "A", text: "ほろ苦くて大人っぽいものが食べたい", score: [3,0,1,0,2] },
+      { label: "B", text: "甘酸っぱくてさっぱりしたものが好き", score: [0,3,1,0,0] },
+      { label: "C", text: "上品でリッチな味わいを楽しみたい", score: [0,0,2,3,1] }
+    ]
+  },
+  {
+    text: "焼き菓子の好きな食感は？",
+    choices: [
+      { label: "A", text: "しっとり・ねっとり・濃厚な感じ", score: [3,0,0,2,0] },
+      { label: "B", text: "ふわっと軽くてやさしい口どけ", score: [0,2,0,1,0] },
+      { label: "C", text: "外はカリッ、中はふわとろ！ギャップが好き", score: [0,0,1,0,3] }
+    ]
+  },
+  {
+    text: "どんなシーンで食べたい？",
+    choices: [
+      { label: "A", text: "コーヒーと合わせてひとりでゆっくり", score: [3,0,1,0,2] },
+      { label: "B", text: "誰かへのお土産・プレゼントにしたい", score: [0,3,0,2,1] },
+      { label: "C", text: "季節感を楽しむちょっと特別なおやつとして", score: [0,0,3,1,0] }
+    ]
+  }
+];
+
+var results = [
+  {
+    shop: "mill coffeestand",
+    item: "チョコファッジブラウニー 330円",
+    emoji: "🍫",
+    desc: "アメリカ発祥のチョコレート焼き菓子。こだわりの配合と焼き加減で生まれた濃厚な甘さを、岩塩がキリッと引き締めた、ひと口で幸せになる美味しさ★まるで生キャラメルのようにねっとり濃厚な食感で、アメリカーノとの相性も抜群！お土産にもぴったり。「ならでわで見た！」で紹介メニューを30円引き🎁",
+    personality: "【あなたのタイプ】\nこだわり派・コーヒー好き。個性的な味わいをじっくり楽しむ、センスある大人のおやつ愛好家✨"
+  },
+  {
+    shop: "ぽると総本舗",
+    item: "させぼレモンケーキ 213円",
+    emoji: "🍋",
+    desc: "佐世保の幻のレモン「味美（みよし）」を使った、ぽると総本舗の看板商品。レモン風味のチョコレートをまとったしっとり生地に、レモン果汁と皮の粉末を使うことで、甘さの中にほんのり苦みを感じる大人の味わい。中にはシロップ漬けのピールも♪「ならでわで見た！」で本店1,000円以上お買上げでレモンケーキ1個プレゼント🎁",
+    personality: "【あなたのタイプ】\n地元愛・定番好き。長く愛される佐世保の味を大切にする、ふるさとを感じるおやつ派✨"
+  },
+  {
+    shop: "MONANGE SWEETS",
+    item: "桃とアールグレイ 518円",
+    emoji: "🍑",
+    desc: "最上級のアーモンドプードルを贅沢に使ったタルト。ザクザクの土台生地とフワッと優しい中層部分の食べ応え＆食感が楽しい逸品！生地に混ぜ込んだ茶葉の豊かな香りと、白桃の瑞々しさもGOOD。今月はタルト全7種が揃うフェアも開催予定！「ならでわで見た！」で店内商品1,500円以上お買上げで焼菓子1個プレゼント🎁",
+    personality: "【あなたのタイプ】\n季節感・おしゃれ好き。旬の素材と上質な組み合わせを楽しむ、感度の高いスイーツ通✨"
+  },
+  {
+    shop: "菓子職人の丘 デタント",
+    item: "マダム 230円",
+    emoji: "🧁",
+    desc: "ミルキーな国産ホワイトチョコとバターの味わいがリッチな看板スイーツ。しっとり食感の生地の秘密はメレンゲ。オレンジリキュールを効かせたホワイトチョコガナッシュを挟み、さらに香り高く仕上げた一品。店主の修業時代からの想いが詰まった、ワンランク上の味わい。パウンド（1,980円）もあります。「ならでわで見た！」で店内商品1,000円以上お買上げでマダム1個プレゼント🎁",
+    personality: "【あなたのタイプ】\n上質志向・ギフト派。職人の技と想いが込められた一品に価値を見出す、本物好きの方✨"
+  },
+  {
+    shop: "PYUCRO（ピュークロ）",
+    item: "カヌレ 100g/420円（目安1個273円程度）",
+    emoji: "🫙",
+    desc: "ラム酒とバニラが香る、ちょっぴり大人の味わいのカヌレ。九州産の牛乳をたっぷり使い、高温のオーブンで時間をかけてじっくり焼くことで、外はカリッと香ばしく中はふわとろ食感に。常温で持ち運べるので贈り物にもオススメ♪8:30開店で売り切れ次第終了！「ならでわで見た！」で店内商品1,500円以上お買上げ＆「ならでわ見た！」で淹れたてコーヒー1杯サービス🎁",
+    personality: "【あなたのタイプ】\nこだわり派・本格フランス菓子好き。外カリ中ふわとろのギャップにやみつきになる、本格派スイーツファン✨"
+  }
+];
+
+var scores = [0, 0, 0, 0, 0];
+var currentQ = 0;
+
+function startQuiz() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizScreen').classList.remove('hidden');
+  scores = [0, 0, 0, 0, 0];
+  currentQ = 0;
+  showQuestion();
+}
+
+function showQuestion() {
+  var q = questions[currentQ];
+  document.getElementById('questionNum').textContent = 'Q' + (currentQ + 1);
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('progressCount').textContent = (currentQ + 1) + ' / ' + questions.length;
+  document.getElementById('progressFill').style.width = ((currentQ + 1) / questions.length * 100) + '%';
+  var wrap = document.getElementById('choicesWrap');
+  wrap.innerHTML = '';
+  q.choices.forEach(function(c) {
+    var btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = '<div class="choice-letter">' + c.label + '</div><div class="choice-text">' + c.text + '</div>';
+    btn.onclick = function() { selectChoice(c.score); };
+    wrap.appendChild(btn);
+  });
+}
+
+function selectChoice(scoreArr) {
+  for (var i = 0; i < scoreArr.length; i++) scores[i] += scoreArr[i];
+  currentQ++;
+  if (currentQ < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('quizScreen').classList.add('hidden');
+  var maxIdx = 0;
+  for (var i = 1; i < scores.length; i++) {
+    if (scores[i] > scores[maxIdx]) maxIdx = i;
+  }
+  var r = results[maxIdx];
+  document.getElementById('resultEmoji').textContent = r.emoji;
+  document.getElementById('resultShop').textContent = r.shop;
+  document.getElementById('resultItem').textContent = r.item;
+  document.getElementById('resultDesc').textContent = r.desc;
+  document.getElementById('resultPersonality').textContent = r.personality;
+  var rc = document.getElementById('resultScreen');
+  rc.style.display = 'block';
+  rc.classList.add('show');
+  rc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetQuiz() {
+  scores = [0, 0, 0, 0, 0];
+  currentQ = 0;
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('startScreen').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
